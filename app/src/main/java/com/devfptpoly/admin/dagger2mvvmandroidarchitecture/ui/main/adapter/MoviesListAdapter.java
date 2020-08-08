@@ -1,0 +1,77 @@
+package com.devfptpoly.admin.dagger2mvvmandroidarchitecture.ui.main.adapter;
+
+import android.app.Activity;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.devfptpoly.admin.dagger2mvvmandroidarchitecture.R;
+import com.devfptpoly.admin.dagger2mvvmandroidarchitecture.data.local.entity.MovieEntity;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.CustomViewHolder> {
+
+    private Activity activity;
+    private List<MovieEntity> movies;
+    public MoviesListAdapter(Activity activity) {
+        this.activity = activity;
+        this.movies = new ArrayList<>();
+    }
+
+    @NonNull
+    @Override
+    public MoviesListAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        com.devfptpoly.admin.dagger2mvvmandroidarchitecture.databinding.MoviesListItemBinding itemBinding = com.devfptpoly.admin.dagger2mvvmandroidarchitecture.databinding.MoviesListItemBinding.inflate(layoutInflater, parent, false);
+        CustomViewHolder viewHolder = new CustomViewHolder(itemBinding);
+        return viewHolder;
+    }
+
+    public void setItems(List<MovieEntity> movies) {
+        int startPosition = this.movies.size();
+        this.movies.addAll(movies);
+        notifyItemRangeChanged(startPosition, movies.size());
+    }
+
+    @Override
+    public int getItemCount() {
+        return movies.size();
+    }
+
+    public MovieEntity getItem(int position) {
+        return movies.get(position);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MoviesListAdapter.CustomViewHolder holder, int position) {
+        holder.bindTo(getItem(position));
+    }
+
+    protected class CustomViewHolder extends RecyclerView.ViewHolder {
+
+        private com.devfptpoly.admin.dagger2mvvmandroidarchitecture.databinding.MoviesListItemBinding binding;
+        public CustomViewHolder(com.devfptpoly.admin.dagger2mvvmandroidarchitecture.databinding.MoviesListItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int width = displayMetrics.widthPixels;
+
+            itemView.setLayoutParams(new RecyclerView.LayoutParams(new Float(width * 0.85f).intValue(),
+                    RecyclerView.LayoutParams.WRAP_CONTENT));
+        }
+
+        public void bindTo(MovieEntity movie) {
+            Picasso.get().load(movie.getPosterPath())
+                    .placeholder(R.drawable.ic_placeholder)
+                    .into(binding.image);
+        }
+    }
+}
